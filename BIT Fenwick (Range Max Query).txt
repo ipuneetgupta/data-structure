@@ -1,0 +1,38 @@
+#include <iostream>
+#include<climits>
+using namespace std;
+int arr[10000];
+int BIT[10000]={0};
+//Range Max Query
+void Update(int i,int val,int n){
+    while(i<=n){
+        BIT[i]=max(BIT[i],val);
+        i=i+(i&(-i));
+    }
+}
+//query only 1 to i 
+//l to r is not possible in max and min query for that segement tree use
+int Query(int i){
+    int ans=INT_MIN;
+    while(i>0){
+        ans=max(ans,BIT[i]);
+        i=i-(i&(-i));
+    }
+    return ans;
+}
+int main() {
+    int n;
+    cin>>n;
+  //Build the BIT
+  for(int i=1;i<=n;i++){
+      cin>>arr[i];
+      Update(i,arr[i],n);
+  }
+  int q;
+  cin>>q;
+  while(q--){
+      int id;
+      cin>>id;
+      cout<<Query(id)<<endl;
+  }
+}
