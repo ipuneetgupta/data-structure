@@ -1,0 +1,27 @@
+#include <iostream>
+using namespace std;
+int r,c;
+int dx[]={1,0,-1,0};
+int dy[]={0,1,0,-1};
+void FloodFill(char mat[][50],int i,int j,char ch,char color){
+//base case =matrix bound
+     if((i<0||j<0)||(i>=r||j>=c))  return;
+//boundary condition
+     if(mat[i][j]!=ch) return;
+//recursive case
+   mat[i][j]=color;
+   //here four pixel around any pixel and with diagonal there is 8 pixel
+   for(int p=0;p<4;p++){
+       FloodFill(mat,i+dx[p],j+dy[p],ch,color);
+   }
+   return ;
+}
+int main() {
+    cin>>r>>c;
+    char input[r][c];
+    for(int i=0;i<r;i++){
+        for(int j=0;j<c;j++){
+            cin>>input[i][j];
+        }
+    }
+}
