@@ -123,30 +123,91 @@ class DLL{
 		node *prevkthB=KthBegin->prev;
 		node *prevKthE=KthEnd->prev;
 		if(KthBegin->next!=NULL)
-			KthBegin->next->prev=KthEnd;
+		    KthBegin->next->prev=KthEnd;
+
 		if(KthEnd->next!=NULL)
 			KthEnd->next->prev=KthBegin;
+
 		if(prevKthE!=NULL)
 			prevKthE->next=KthBegin;
 
 		if (prevkthB!=NULL)
 			prevkthB->next=KthEnd;
 
-		// KthBegin->prev=prevKthE;
-		// KthEnd->prev=prevkthB;
-
 		node *temp=KthBegin->next;
 		KthBegin->next=KthEnd->next;
 		KthEnd->next=temp;
 
-        temp=KthBegin->prev;
-        KthBegin->prev=KthEnd->prev;
-        KthEnd->prev=temp;
+		temp=KthBegin->prev;
+		KthBegin->prev=KthEnd->prev;
+		KthEnd->prev=temp;
 
 		if(KthBegin->prev==NULL) this->head=KthBegin;
 		else if(KthEnd->prev==NULL) this->head=KthEnd;
 		return ;
 	}
+	node * split(){
+		node *slow,*fast=head;
+		while(fast->next!=NULL&&fast->next->next!=NULL){
+			slow=slow->next;
+			fast=fast->next->next;
+		}
+		node *mid=slow->next;
+		slow->next=NULL;
+		return mid;
+	}
+	node* merge(node* Left,node* Right){
+      if(Left==NULL) return Right;
+      else if(Right==NULL) return Left;
+      else if(Left->data<Right->data){
+            Left->next=merge(Left->next,Right);
+            Left->next->prev=Left;
+            Left->prev=NULL;
+            return Right;
+      }else {
+          Right->next=merge(Left,Right->next);
+          Right->next->prev=Right;
+          Right->prev=NULL;
+          return Right;
+      }
+      return NULL;
+	}
+    node* MergeSort(node *head){
+       if(head==NULL&&head->next==NULL) return head;
+       node *Left=this->head;
+       node *Right=this->split();
+       MergeSort(Left);
+       MergeSort(Right);
+       node *merge =this->merge(Left,Right);
+       return merge;
+    }
+    void swap(node *s,node *e){
+    	int temp=s->data;
+    	s->data=e->data;
+    	e->data=temp;
+    }
+    node *Partition_Index(node *low,node *high){
+       node *se=low->prev;
+       int pivot=high->data;
+       for(node *i=low;i!=NULL;i=i->next){
+       	   if(i->data<=pivot){
+       	   	if(se==NULL) se=low;
+       	   	else se=se->next;
+       	   	this->swap(i,se);
+       	   }
+       }
+       if(se==NULL) se=low;
+       	else se=se->next;
+       this->swap(se,high);
+       return se;
+    }
+    void QuickSort(node *low,node *high){
+        if(low==NULL&&high==NULL&&this->head==NULL) return ;
+        node *p_idx=this->Partition_Index(low,high);
+        QuickSort(low,p_idx->prev);
+        QuickSort(p_idx->next,high);
+        return ;
+    }
 	void Display(){
 		node *temp=this->head;
 		while(temp->next!=NULL){
@@ -180,5 +241,12 @@ int main(){
 	cout<<"The Kth Node From the End::"<<list.KthNodeFromEnd(1)->data<<endl;
 	cout<<"KthSwapfrom begin and End::"<<endl;
 	list.KthSwapfromSAE(1);
+	cout<<"MergeSort::"<<endl;;
+	// list.Display();
+ //    list.head=list.MergeSort(list.head);
+ //    list.Display();
+    cout<<"QuickSort"<<endl;
+    list.Display();
+    list.QuickSort(list.head,list.LastNode());
 	list.Display();
 }
